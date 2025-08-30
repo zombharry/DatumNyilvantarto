@@ -18,10 +18,7 @@ namespace Data
             if (!optionsBuilder.IsConfigured)
             {
                 var logFile = "ef-log.txt";
-                var writer = new StreamWriter(logFile, append: true) { AutoFlush = true };
-                optionsBuilder.UseSqlite("Data Source=iskolaDb.db")
-                    .EnableSensitiveDataLogging()
-                    .LogTo(writer.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information);
+                optionsBuilder.UseSqlite("Data Source=iskolaDb.db");
             }
         }
 

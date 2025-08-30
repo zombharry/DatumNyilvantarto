@@ -1,4 +1,6 @@
-﻿using System.ComponentModel;
+﻿using DatumNyilvantarto;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 
 namespace ViewModel
 {
@@ -36,6 +38,8 @@ namespace ViewModel
         public bool Figyelmeztet { get; set; } // kell-e figyelmeztetés
 
         public string MegjelenitettNev => $"{Evfolyam}/{Betu}";
+
+        public ObservableCollection<TanuloViewModel> Diakok { get; set; } = new();
 
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged(string propertyName)

@@ -1,0 +1,38 @@
+﻿<Window x:Class="DatumNyilvantarto.TanuloListaWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DatumNyilvantarto"
+        mc:Ignorable="d"
+        Title="TanuloListaWindow" Height="450" Width="800">
+	<DockPanel>
+		<!-- Fejléc -->
+		<StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Background="LightGray">
+			<TextBlock Text="Osztályok" FontSize="16" FontWeight="Bold" VerticalAlignment="Center"/>
+
+
+			<Button Content="Mentés" Command="{Binding SaveCommand}"  Width="60" Height="30" Margin="10,0,0,0" FontWeight="Bold" FontSize="16"/>
+		</StackPanel>
+		<DataGrid ItemsSource="{Binding Tanulok}" AutoGenerateColumns="False" Margin="10"
+          CanUserAddRows="True" CanUserDeleteRows="True" IsReadOnly="False" 
+          SelectedItem="{Binding KivalasztottTanulo}">
+			<DataGrid.Columns>
+				<DataGridTextColumn Header="Név" Binding="{Binding MegjelenitettNev}" Width="*" IsReadOnly="True"/>
+				<DataGridTextColumn Header="Osztály" Binding="{Binding Osztaly}"/>
+				<DataGridTextColumn Header="GyermekVedelmi" Binding="{Binding GyermekVedelmi}"/>
+				<DataGridTextColumn Header="HH" Binding="{Binding Hatranyos}"/>
+				<DataGridTextColumn Header="HHH" Binding="{Binding HalmozottanHatranyos}" Width="*"/>
+				<DataGridTemplateColumn Header="Törlés" Width="50">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<Button Content ="Törlés" Command="{Binding DataContext.DeleteTanuloCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+            CommandParameter="{Binding}">
+							</Button>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+			</DataGrid.Columns>
+		</DataGrid>
+	</DockPanel>
+</Window>

@@ -10,7 +10,7 @@ using System.Windows.Input;
 using System.Windows;
 using Data;
 using ViewModel.UndoAbleCommand;
-using Xceed.Wpf.Toolkit;
+using DatumNyilvantarto;
 
 namespace ViewModel
 {
@@ -34,23 +34,33 @@ namespace ViewModel
 
         public Tanulo KivalasztottTanulo { get; set; }
 
-        public ICommand DeleteOsztalyCommand { get; }
-        public ICommand AddTanuloCommand { get; }
-        public ICommand DeleteTanuloCommand { get; }
+        public ICommand DeleteOsztalyCommand => new RelayCommand(DeleteOsztaly);
+        public ICommand AddTanuloCommand => new RelayCommand(AddTanulo);
+        public ICommand DeleteTanuloCommand  => new RelayCommand(DeleteTanulo);
 
         public ICommand SaveCommand => new RelayCommand(SaveAll);
         public ICommand UndoCommand => new RelayCommand(_ => UndoManager.Undo());
         public ICommand RedoCommand => new RelayCommand(_ => UndoManager.Redo());
+
+        public ICommand TanulokMegnyitCommand => new RelayCommand(TanulokMegnyitasa);
+
+        private void TanulokMegnyitasa(object obj)
+        {
+            if (obj is OsztalyViewModel osztalyVm)
+            {
+                var window = new TanuloListaWindow
+                {
+                    DataContext = osztalyVm
+                };
+                window.ShowDialog();
+            }
+        }
 
         public MainViewModel()
         {
             Osztalyok = new ObservableCollection<OsztalyViewModel>();
             Tanulok = new ObservableCollection<Tanulo>();
 
-            
-            DeleteOsztalyCommand = new RelayCommand(DeleteOsztaly);
-            AddTanuloCommand = new RelayCommand(AddTanulo);
-            DeleteTanuloCommand = new RelayCommand(DeleteTanulo);
             OsztalyokBetoltese();
         }
 
@@ -128,11 +138,22 @@ namespace ViewModel
         {
             if (obj is OsztalyViewModel osztalyVm)
             {
-                if (MessageBox.Show("", MessageBoxButton.YesNo))
+                if (System.Windows.MessageBox.Show($"Biztosan törlöd a(z) {osztalyVm.MegjelenitettNev} osztályt?",
+                        "Megerősítés",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Warning) == MessageBoxResult.Yes)
                 {
-                    using var db = new IskolaDbContext();
-                    db.Osztalyok.Remove(db.Osztalyok.Find(KivalasztottOsztaly.Id));
-                    db.SaveChanges();
+                    if (osztalyVm.Id > 0)
+                    {
+                        using var db = new IskolaDbContext();
+                        var entity = db.Osztalyok.Find(osztalyVm.Id);
+                        db.Osztalyok.Remove(db.Osztalyok.Find(osztalyVm.Id));
+                        db.SaveChanges();
+                        
+                    }
+                    
+
+                    Osztalyok.Remove(osztalyVm);
                     OsztalyokBetoltese();
                 }
                 

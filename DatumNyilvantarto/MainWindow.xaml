@@ -9,21 +9,27 @@
 	<Window.Resources>
 		<local:BoolToStatusConverter x:Key="BoolToStatusConverter"/>
 	</Window.Resources>
+	<Window.InputBindings>
+		<KeyBinding Key="S" Modifiers="Control" Command="{Binding SaveCommand}" />
+	</Window.InputBindings>
 	<DockPanel>
 		<!-- Fejléc -->
 		<StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Background="LightGray">
 			<TextBlock Text="Osztályok" FontSize="16" FontWeight="Bold" VerticalAlignment="Center"/>
-			<Button Content="+" Command="{Binding AddOsztalyCommand}" 
-                    Width="30" Height="30" Margin="10,0,0,0"
-                    FontWeight="Bold" FontSize="16"/>
+			
+
+			<Button Content="Mentés" Command="{Binding SaveCommand}"  Width="60" Height="30" Margin="10,0,0,0" FontWeight="Bold" FontSize="16"/>
 		</StackPanel>
 
 		<!-- Osztály lista -->
 		<DataGrid ItemsSource="{Binding Osztalyok}" AutoGenerateColumns="False" Margin="10"
-                  CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True"
+                  CanUserAddRows="True" CanUserDeleteRows="True" IsReadOnly="False" 
                   SelectedItem="{Binding KivalasztottOsztaly}">
 			<DataGrid.Columns>
-				<DataGridTextColumn Header="Osztály" Binding="{Binding MegjelenitettNev}" Width="*"/>
+				<DataGridTextColumn Header="Osztály" Binding="{Binding MegjelenitettNev}" Width="*" IsReadOnly="True"/>
+				<DataGridTextColumn Header="Évfolyam" Binding="{Binding Evfolyam}"/>
+				<DataGridTextColumn Header="Betű" Binding="{Binding Betu}"/>
+				<DataGridTextColumn Header="Kezdő év" Binding="{Binding KezdoEv}"/>
 				<DataGridTextColumn Header="Osztályfőnök" Binding="{Binding OsztalyFonok}" Width="*"/>
 				<DataGridTemplateColumn Header="Státusz" Width="80">
 					<DataGridTemplateColumn.CellTemplate>
@@ -31,6 +37,25 @@
 							<TextBlock Text="{Binding Figyelmeztet, Converter={StaticResource BoolToStatusConverter}}" 
                                        FontSize="16" 
                                        HorizontalAlignment="Center"/>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+				<DataGridTemplateColumn Header="Tanulók" Width="80">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<Button Command="{Binding DataContext.TanulokMegnyitCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                CommandParameter="{Binding}">
+								<TextBlock Text="👥" FontSize="14"/>
+							</Button>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+				<DataGridTemplateColumn Header="Törlés" Width="50">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<Button Content ="Törlés" Command="{Binding DataContext.DeleteOsztalyCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                    CommandParameter="{Binding}">
+							</Button>
 						</DataTemplate>
 					</DataGridTemplateColumn.CellTemplate>
 				</DataGridTemplateColumn>
