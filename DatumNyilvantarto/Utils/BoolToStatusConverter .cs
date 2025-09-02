@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
 
-namespace DatumNyilvantarto
+namespace DatumNyilvantarto.Utils
 {
     public class BoolToStatusConverter : IValueConverter
     {

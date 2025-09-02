@@ -4,10 +4,11 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DatumNyilvantarto"
+        xmlns:utils="clr-namespace:DatumNyilvantarto.Utils"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
 	<Window.Resources>
-		<local:BoolToStatusConverter x:Key="BoolToStatusConverter"/>
+		<utils:BoolToStatusConverter x:Key="BoolToStatusConverter"/>
 	</Window.Resources>
 	<Window.InputBindings>
 		<KeyBinding Key="S" Modifiers="Control" Command="{Binding SaveCommand}" />
@@ -22,19 +23,19 @@
 		</StackPanel>
 
 		<!-- Osztály lista -->
-		<DataGrid ItemsSource="{Binding Osztalyok}" AutoGenerateColumns="False" Margin="10"
+        <DataGrid ItemsSource="{Binding Classes}" AutoGenerateColumns="False" Margin="10"
                   CanUserAddRows="True" CanUserDeleteRows="True" IsReadOnly="False" 
-                  SelectedItem="{Binding KivalasztottOsztaly}">
+                  SelectedItem="{Binding SelectedClass}">
 			<DataGrid.Columns>
-				<DataGridTextColumn Header="Osztály" Binding="{Binding MegjelenitettNev}" Width="*" IsReadOnly="True"/>
-				<DataGridTextColumn Header="Évfolyam" Binding="{Binding Evfolyam}"/>
-				<DataGridTextColumn Header="Betű" Binding="{Binding Betu}"/>
-				<DataGridTextColumn Header="Kezdő év" Binding="{Binding KezdoEv}"/>
-				<DataGridTextColumn Header="Osztályfőnök" Binding="{Binding OsztalyFonok}" Width="*"/>
+                <DataGridTextColumn Header="Osztály" Binding="{Binding ClassName}" Width="*" IsReadOnly="True"/>
+				<DataGridTextColumn Header="Évfolyam" Binding="{Binding Grade}"/>
+                <DataGridTextColumn Header="Betű" Binding="{Binding Letter}"/>
+                <DataGridTextColumn Header="Kezdő év" Binding="{Binding StartingYear}"/>
+                <DataGridTextColumn Header="Osztályfőnök" Binding="{Binding HeadTeacher}" Width="*"/>
 				<DataGridTemplateColumn Header="Státusz" Width="80">
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate>
-							<TextBlock Text="{Binding Figyelmeztet, Converter={StaticResource BoolToStatusConverter}}" 
+                            <TextBlock Text="{Binding Warning, Converter={StaticResource BoolToStatusConverter}}" 
                                        FontSize="16" 
                                        HorizontalAlignment="Center"/>
 						</DataTemplate>
@@ -43,7 +44,7 @@
 				<DataGridTemplateColumn Header="Tanulók" Width="80">
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate>
-							<Button Command="{Binding DataContext.TanulokMegnyitCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                            <Button Command="{Binding DataContext.OpenStudentsCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                 CommandParameter="{Binding}">
 								<TextBlock Text="👥" FontSize="14"/>
 							</Button>
@@ -53,7 +54,7 @@
 				<DataGridTemplateColumn Header="Törlés" Width="50">
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate>
-							<Button Content ="Törlés" Command="{Binding DataContext.DeleteOsztalyCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                            <Button Content ="Törlés" Command="{Binding DataContext.DeleteSchoolClassCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                     CommandParameter="{Binding}">
 							</Button>
 						</DataTemplate>

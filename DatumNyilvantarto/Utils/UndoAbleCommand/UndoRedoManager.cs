@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ViewModel.UndoAbleCommand
+namespace DatumNyilvantarto.Utils.UndoAbleCommand
 {
     public class UndoRedoManager
     {

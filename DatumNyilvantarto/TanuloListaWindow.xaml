@@ -14,19 +14,22 @@
 
 			<Button Content="Mentés" Command="{Binding SaveCommand}"  Width="60" Height="30" Margin="10,0,0,0" FontWeight="Bold" FontSize="16"/>
 		</StackPanel>
-		<DataGrid ItemsSource="{Binding Tanulok}" AutoGenerateColumns="False" Margin="10"
+		<DataGrid ItemsSource="{Binding Students}" AutoGenerateColumns="False" Margin="10"
           CanUserAddRows="True" CanUserDeleteRows="True" IsReadOnly="False" 
-          SelectedItem="{Binding KivalasztottTanulo}">
+          SelectedItem="{Binding SelectedStudent}">
 			<DataGrid.Columns>
-				<DataGridTextColumn Header="Név" Binding="{Binding MegjelenitettNev}" Width="*" IsReadOnly="True"/>
-				<DataGridTextColumn Header="Osztály" Binding="{Binding Osztaly}"/>
-				<DataGridTextColumn Header="GyermekVedelmi" Binding="{Binding GyermekVedelmi}"/>
-				<DataGridTextColumn Header="HH" Binding="{Binding Hatranyos}"/>
-				<DataGridTextColumn Header="HHH" Binding="{Binding HalmozottanHatranyos}" Width="*"/>
+				<DataGridTextColumn Header="Név" Binding="{Binding Name}" Width="*" />
+                <DataGridTextColumn Header="Osztály" Binding="{Binding SchoolClass}" Width="*"/>
+                <DataGridTextColumn Header="Anyja Neve" Binding="{Binding MotherName}" Width="*" />
+                <DataGridTextColumn Header="Születési hely" Binding="{Binding CityOfBirth}" Width="*"/>
+                <DataGridTextColumn Header="Születési ideje" Binding="{Binding DateOfBirth}" Width="*"/>
+                <DataGridTextColumn Header="GyermekVedelmi" Binding="{Binding ChildProtection}" Width="*"/>
+                <DataGridTextColumn Header="HH" Binding="{Binding Disadvantaged}" Width="*"/>
+                <DataGridTextColumn Header="HHH" Binding="{Binding SeverlyDisadvantaged}" Width="*"/>
 				<DataGridTemplateColumn Header="Törlés" Width="50">
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate>
-							<Button Content ="Törlés" Command="{Binding DataContext.DeleteTanuloCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+							<Button Content ="Törlés" Command="{Binding DataContext.DeleteStudentCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
             CommandParameter="{Binding}">
 							</Button>
 						</DataTemplate>
