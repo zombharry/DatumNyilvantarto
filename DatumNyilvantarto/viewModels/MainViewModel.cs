@@ -23,8 +23,8 @@ namespace DatumNyilvantarto.viewModels
 
         public UndoRedoManager UndoManager { get; } = new();
 
-        private SchoolClass _selectedClass;
-        public SchoolClass SelectedClass 
+        private SchoolClass? _selectedClass;
+        public SchoolClass? SelectedClass 
         {
             get => _selectedClass;
             set 
@@ -34,11 +34,11 @@ namespace DatumNyilvantarto.viewModels
             }
         }
 
-        public Student SelectedStudent { get; set; }
+        //public Student SelectedStudent { get; set; }
 
         public ICommand DeleteSchoolClassCommand => new RelayCommand(DeleteSchoolClass);
-        public ICommand AddStudentCommand => new RelayCommand(AddStudent);
-        public ICommand DeleteStudentCommand  => new RelayCommand(DeleteStudent);
+        //public ICommand AddStudentCommand => new RelayCommand(AddStudent);
+        //public ICommand DeleteStudentCommand  => new RelayCommand(DeleteStudent);
 
         public ICommand SaveCommand => new RelayCommand(SaveAll);
         public ICommand UndoCommand => new RelayCommand(_ => UndoManager.Undo());
@@ -88,53 +88,53 @@ namespace DatumNyilvantarto.viewModels
 
         }
 
-        private void DeleteStudent(object obj)
-        {
-            if (SelectedStudent != null)
-            {
-                var exePath = AppDomain.CurrentDomain.BaseDirectory;
-                var dbPath = Path.Combine(exePath, "schoolDb.db");
+        //private void DeleteStudent(object obj)
+        //{
+        //    if (SelectedStudent != null)
+        //    {
+        //        var exePath = AppDomain.CurrentDomain.BaseDirectory;
+        //        var dbPath = Path.Combine(exePath, "schoolDb.db");
 
-                var options = new DbContextOptionsBuilder<SchoolDbContext>()
-                    .UseSqlite($"Data Source={dbPath}")
-                    .Options;
+        //        var options = new DbContextOptionsBuilder<SchoolDbContext>()
+        //            .UseSqlite($"Data Source={dbPath}")
+        //            .Options;
 
-                using var db = new SchoolDbContext(options);
-                db.Students.Remove(db.Students.Find(SelectedStudent.Id));
-                db.SaveChanges();
-                LoadStudents();
-            }
-        }
+        //        using var db = new SchoolDbContext(options);
+        //        db.Students.Remove(db.Students.Find(SelectedStudent.Id));
+        //        db.SaveChanges();
+        //        LoadStudents();
+        //    }
+        //}
 
-        private void AddStudent(object obj)
-        {
-            if (SelectedClass != null)
-            {
-                var exePath = AppDomain.CurrentDomain.BaseDirectory;
-                var dbPath = Path.Combine(exePath, "schoolDb.db");
+        //private void AddStudent(object obj)
+        //{
+        //    if (SelectedClass != null)
+        //    {
+        //        var exePath = AppDomain.CurrentDomain.BaseDirectory;
+        //        var dbPath = Path.Combine(exePath, "schoolDb.db");
 
-                var options = new DbContextOptionsBuilder<SchoolDbContext>()
-                    .UseSqlite($"Data Source={dbPath}")
-                    .Options;
+        //        var options = new DbContextOptionsBuilder<SchoolDbContext>()
+        //            .UseSqlite($"Data Source={dbPath}")
+        //            .Options;
 
-                using var db = new SchoolDbContext(options);
+        //        using var db = new SchoolDbContext(options);
 
-                var tanulo = new Student
-                {
-                    Name = "Placeholder",
-                    CityOfBirth = "Placeholder",
-                    DateOfBirth = DateTime.Now,
-                    MotherName = "Placeholder",
-                    ClassId = SelectedClass.Id,
-                    ChildProtection = DateTime.Now.AddDays(10),
-                    Disadvantaged = DateTime.Now.AddDays(20),
-                    SeverlyDisadvantaged = DateTime.Now.AddDays(30)
-                };
-                db.Students.Add(tanulo);
-                db.SaveChanges();
-                LoadStudents();
-            }
-        }
+        //        var tanulo = new Student
+        //        {
+        //            Name = "Placeholder",
+        //            CityOfBirth = "Placeholder",
+        //            DateOfBirth = DateTime.Now,
+        //            MotherName = "Placeholder",
+        //            ClassId = SelectedClass.Id,
+        //            ChildProtection = DateTime.Now.AddDays(10),
+        //            Disadvantaged = DateTime.Now.AddDays(20),
+        //            SeverlyDisadvantaged = DateTime.Now.AddDays(30)
+        //        };
+        //        db.Students.Add(tanulo);
+        //        db.SaveChanges();
+        //        LoadStudents();
+        //    }
+        //}
 
         private void LoadClasses()
         {
@@ -167,6 +167,8 @@ namespace DatumNyilvantarto.viewModels
                     Warning = warn
                 });
             }
+
+            EnsureDummyRow();
         }
 
         private void DeleteSchoolClass(object obj)
@@ -194,11 +196,9 @@ namespace DatumNyilvantarto.viewModels
                         
                     }
                     
-
                     Classes.Remove(schoolClassVm);
                     LoadClasses();
                 }
-                
             }
         }
 
@@ -217,14 +217,21 @@ namespace DatumNyilvantarto.viewModels
                 
                 if (schoolClassVm.Id == 0)
                 {
-                    var schoolClass = new SchoolClass
+                    if (schoolClassVm.Grade != 0
+                        && schoolClassVm.StartingYear != 0
+                        && schoolClassVm.HeadTeacher != string.Empty
+                        && schoolClassVm.Letter != string.Empty)
                     {
-                        Letter = schoolClassVm.Letter,
-                        Grade = schoolClassVm.Grade,
-                        StartingYear = schoolClassVm.StartingYear,
-                        HeadTeacher = schoolClassVm.HeadTeacher,
-                    };
-                    db.SchoolClasses.Add(schoolClass);
+                        var schoolClass = new SchoolClass
+                        {
+                            Letter = schoolClassVm.Letter,
+                            Grade = schoolClassVm.Grade,
+                            StartingYear = schoolClassVm.StartingYear,
+                            HeadTeacher = schoolClassVm.HeadTeacher,
+                        };
+                        db.SchoolClasses.Add(schoolClass);
+                    }
+                    
                 }
                 else
                 {
@@ -245,6 +252,29 @@ namespace DatumNyilvantarto.viewModels
             UndoManager.SetSavePoint();
             LoadClasses();
         }
+
+        private void EnsureDummyRow()
+        {
+            if (!Classes.Any(c => c.IsNew))
+            {
+                var dummy = new SchoolClassViewModel
+                {
+                    Grade = 0,
+                    StartingYear = 0,
+                    Letter = string.Empty,
+                    HeadTeacher = string.Empty,
+                    IsNew = true,
+                };
+                dummy.FirstEditStarted += Dummy_FirstEditStarted;
+                Classes.Add(dummy);
+
+            }
+        }
+        private void Dummy_FirstEditStarted(object? sender, EventArgs e)
+        {
+            EnsureDummyRow();
+        }
+
         private bool IsExpiringOrExpired(DateTime date)
         {
             DateTime today = DateTime.Today;

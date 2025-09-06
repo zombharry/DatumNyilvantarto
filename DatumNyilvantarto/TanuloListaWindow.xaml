@@ -18,8 +18,7 @@
           CanUserAddRows="True" CanUserDeleteRows="True" IsReadOnly="False" 
           SelectedItem="{Binding SelectedStudent}">
 			<DataGrid.Columns>
-				<DataGridTextColumn Header="Név" Binding="{Binding Name}" Width="*" />
-                <DataGridTextColumn Header="Osztály" Binding="{Binding SchoolClass}" Width="*"/>
+                <DataGridTextColumn Header="Név" Binding="{Binding Name}" Width="*" />
                 <DataGridTextColumn Header="Anyja Neve" Binding="{Binding MotherName}" Width="*" />
                 <DataGridTextColumn Header="Születési hely" Binding="{Binding CityOfBirth}" Width="*"/>
                 <DataGridTextColumn Header="Születési ideje" Binding="{Binding DateOfBirth}" Width="*"/>

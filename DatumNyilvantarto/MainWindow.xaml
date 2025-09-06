@@ -8,12 +8,29 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
 	<Window.Resources>
-		<utils:BoolToStatusConverter x:Key="BoolToStatusConverter"/>
-	</Window.Resources>
-	<Window.InputBindings>
-		<KeyBinding Key="S" Modifiers="Control" Command="{Binding SaveCommand}" />
-	</Window.InputBindings>
-	<DockPanel>
+        <utils:BoolToStatusConverter x:Key="BoolToStatusConverter"/>
+    </Window.Resources>
+    <Window.InputBindings>
+        
+        <KeyBinding Command="ApplicationCommands.Undo" Modifiers="Control" Key="Z"/>
+        
+        <KeyBinding Command="ApplicationCommands.Redo" Modifiers="Control" Key="Y"/>
+        <KeyBinding Command="ApplicationCommands.Redo" Modifiers="Control+Shift" Key="Z"/>
+
+        
+        <KeyBinding Command="{Binding SaveCommand}" Modifiers="Control" Key="S"/>
+    </Window.InputBindings>
+
+    <Window.CommandBindings>
+       
+        <CommandBinding Command="ApplicationCommands.Undo"
+                        CanExecute="GlobalUndo_CanExecute"
+                        Executed="GlobalUndo_Executed"/>
+        <CommandBinding Command="ApplicationCommands.Redo"
+                        CanExecute="GlobalRedo_CanExecute"
+                        Executed="GlobalRedo_Executed"/>
+    </Window.CommandBindings>
+    <DockPanel>
 		<!-- Fejléc -->
 		<StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Background="LightGray">
 			<TextBlock Text="Osztályok" FontSize="16" FontWeight="Bold" VerticalAlignment="Center"/>
@@ -23,16 +40,34 @@
 		</StackPanel>
 
 		<!-- Osztály lista -->
-        <DataGrid ItemsSource="{Binding Classes}" AutoGenerateColumns="False" Margin="10"
-                  CanUserAddRows="True" CanUserDeleteRows="True" IsReadOnly="False" 
+        <DataGrid ItemsSource="{Binding Classes}" AutoGenerateColumns="False"
+                  CanUserAddRows="False" CanUserDeleteRows="True"
+                  Margin="10"
+                  IsReadOnly="False" 
                   SelectedItem="{Binding SelectedClass}">
 			<DataGrid.Columns>
                 <DataGridTextColumn Header="Osztály" Binding="{Binding ClassName}" Width="*" IsReadOnly="True"/>
-				<DataGridTextColumn Header="Évfolyam" Binding="{Binding Grade}"/>
-                <DataGridTextColumn Header="Betű" Binding="{Binding Letter}"/>
-                <DataGridTextColumn Header="Kezdő év" Binding="{Binding StartingYear}"/>
-                <DataGridTextColumn Header="Osztályfőnök" Binding="{Binding HeadTeacher}" Width="*"/>
-				<DataGridTemplateColumn Header="Státusz" Width="80">
+                <DataGridTextColumn Header="Évfolyam">
+                    <DataGridTextColumn.Binding>
+                        <Binding Path="Grade" UpdateSourceTrigger="PropertyChanged" />
+                    </DataGridTextColumn.Binding>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Betű" >
+                    <DataGridTextColumn.Binding>
+                        <Binding Path="Letter" UpdateSourceTrigger="PropertyChanged" />
+                    </DataGridTextColumn.Binding>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Kezdő év">
+                    <DataGridTextColumn.Binding>
+                        <Binding Path="StartingYear" UpdateSourceTrigger="PropertyChanged" />
+                    </DataGridTextColumn.Binding>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Osztályfőnök"  Width="*">
+                    <DataGridTextColumn.Binding>
+                        <Binding Path="HeadTeacher" UpdateSourceTrigger="PropertyChanged" />
+                    </DataGridTextColumn.Binding>
+                </DataGridTextColumn>
+                <DataGridTemplateColumn Header="Státusz" Width="80">
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate>
                             <TextBlock Text="{Binding Warning, Converter={StaticResource BoolToStatusConverter}}" 
@@ -44,19 +79,40 @@
 				<DataGridTemplateColumn Header="Tanulók" Width="80">
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate>
-                            <Button Command="{Binding DataContext.OpenStudentsCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                CommandParameter="{Binding}">
-								<TextBlock Text="👥" FontSize="14"/>
-							</Button>
+                            <Button Content="👥"
+                                Command="{Binding DataContext.OpenStudentsCommand,RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                    CommandParameter="{Binding}">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsNew}" Value="False">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
 						</DataTemplate>
 					</DataGridTemplateColumn.CellTemplate>
 				</DataGridTemplateColumn>
 				<DataGridTemplateColumn Header="Törlés" Width="50">
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate>
-                            <Button Content ="Törlés" Command="{Binding DataContext.DeleteSchoolClassCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                    CommandParameter="{Binding}">
-							</Button>
+                            <Button Content ="Törlés"
+                                    Command="{Binding DataContext.DeleteSchoolClassCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                    CommandParameter="{Binding}">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsNew}" Value="False">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
 						</DataTemplate>
 					</DataGridTemplateColumn.CellTemplate>
 				</DataGridTemplateColumn>

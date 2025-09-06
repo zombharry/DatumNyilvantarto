@@ -17,33 +17,27 @@ public partial class MainWindow : Window
         DataContext = ViewModel;
     }
 
-    protected override void OnPreviewKeyDown(KeyEventArgs e)
+    private void GlobalUndo_CanExecute(object sender, CanExecuteRoutedEventArgs e)
     {
-        if (e.Key == Key.Z)
-        {
-            if (Keyboard.FocusedElement is TextBox textBox && textBox.CanUndo)
-            {
-                textBox.Undo();
-            }
-            else
-            {
-                (DataContext as MainViewModel)?.UndoCommand.Execute(null);
-            }
-            e.Handled = true;
-        }
-        else if (e.Key == Key.Y)
-        {
-            if (Keyboard.FocusedElement is TextBox textBox && textBox.CanRedo)
-            {
-                textBox.Redo();
-            }
-            else
-            {
-                (DataContext as MainViewModel)?.RedoCommand.Execute(null);
-            }
-            e.Handled = true;
-        }
+        e.CanExecute = ViewModel?.UndoCommand.CanExecute(null) == true;
+        e.Handled = true;
+    }
 
-            base.OnPreviewKeyDown(e);
+    private void GlobalUndo_Executed(object sender, ExecutedRoutedEventArgs e)
+    {
+        ViewModel?.UndoCommand.Execute(null);
+        e.Handled = true;
+    }
+
+    private void GlobalRedo_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+    {
+        e.CanExecute = ViewModel?.RedoCommand.CanExecute(null) == true;
+        e.Handled = true;
+    }
+
+    private void GlobalRedo_Executed(object sender, ExecutedRoutedEventArgs e)
+    {
+        ViewModel?.RedoCommand.Execute(null);
+        e.Handled = true;
     }
 }

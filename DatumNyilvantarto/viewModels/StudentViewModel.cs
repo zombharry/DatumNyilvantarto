@@ -19,7 +19,7 @@ namespace DatumNyilvantarto.viewModels
         private DateTime _disadvantaged;
         private DateTime _severlyDisadvantaged;
 
-        public int Id {get;set;}
+        public int Id {get => _id;}
         public string Name 
         {
             get => _name;
