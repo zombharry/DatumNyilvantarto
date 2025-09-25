@@ -1,0 +1,113 @@
+﻿<Window x:Name="window" x:Class="DatumNyilvantarto.StudentWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DatumNyilvantarto"
+		xmlns:utils="clr-namespace:DatumNyilvantarto.Utils"
+        mc:Ignorable="d"
+        Title="StudentWindow" Height="450" Width="800">
+	<Window.Resources>
+		<utils:DateToBrushConverter x:Key="DateToBrushConverter"/>
+	</Window.Resources>
+	<DockPanel>
+		<!-- Fejléc -->
+		<StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Background="LightGray">
+			<TextBlock Text="Osztályok" FontSize="16" FontWeight="Bold" VerticalAlignment="Center"/>
+
+
+			<Button Content="Mentés" Command="{Binding SaveCommand}"  Width="60" Height="30" Margin="10,0,0,0" FontWeight="Bold" FontSize="16"/>
+		</StackPanel>
+		<DataGrid ItemsSource="{Binding Students}" AutoGenerateColumns="False" Margin="10"
+      CanUserAddRows="True" CanUserDeleteRows="True" IsReadOnly="False" 
+      SelectedItem="{Binding SelectedStudent}">
+			<DataGrid.Columns>
+				<DataGridTextColumn Header="Név" Binding="{Binding Name}" Width="*" />
+				<DataGridTextColumn Header="Anyja Neve" Binding="{Binding MotherName}" Width="*" />
+				<DataGridTextColumn Header="Születési hely" Binding="{Binding CityOfBirth}" Width="*"/>
+				<!--<DataGridTextColumn Header="Születési ideje" Binding="{Binding DateOfBirth}" Width="*"/>-->
+				<DataGridTemplateColumn Header="Születési ideje" Width="*">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<TextBlock
+								Text="{Binding DateOfBirth, StringFormat=d}"/>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+					<DataGridTemplateColumn.CellEditingTemplate>
+						<DataTemplate>
+							<DatePicker
+								SelectedDate="{Binding DateOfBirth}" 
+								SelectedDateFormat="Short" />
+						</DataTemplate>
+					</DataGridTemplateColumn.CellEditingTemplate>
+				</DataGridTemplateColumn>
+				<!--<DataGridTextColumn Header="GyermekVedelmi" Binding="{Binding ChildProtection}" Width="*"/>-->
+				<DataGridTemplateColumn Header="Gyermekvédelmi" Width="*">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<TextBlock 
+								Text="{Binding ChildProtection, StringFormat=d}" 
+								Background="{Binding ChildProtection, Converter={StaticResource DateToBrushConverter}}"
+								Foreground="{Binding ChildProtection, Converter={StaticResource DateToBrushConverter}, ConverterParameter=Foreground}"
+								/>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+					<DataGridTemplateColumn.CellEditingTemplate>
+						<DataTemplate>
+							<DatePicker 
+								SelectedDate="{Binding ChildProtection}" 
+								SelectedDateFormat="Short"/>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellEditingTemplate>
+				</DataGridTemplateColumn>
+				<!--<DataGridTextColumn Header="HH" Binding="{Binding Disadvantaged}" Width="*"/>-->
+				<DataGridTemplateColumn Header="HH" Width="*">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<TextBlock 
+								Text="{Binding Disadvantaged, StringFormat=d}"
+								Background="{Binding Disadvantaged, Converter={StaticResource DateToBrushConverter}}"
+								Foreground="{Binding Disadvantaged, Converter={StaticResource DateToBrushConverter}, ConverterParameter=Foreground}"
+								/>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+					<DataGridTemplateColumn.CellEditingTemplate>
+						<DataTemplate>
+							<DatePicker 
+								SelectedDate="{Binding Disadvantaged}" 
+								SelectedDateFormat="Short"/>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellEditingTemplate>
+				</DataGridTemplateColumn>
+				<DataGridTemplateColumn Header="HHH" Width="*">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<TextBlock 
+								Text="{Binding SeverlyDisadvantaged, StringFormat=d}" 
+								Background="{Binding SeverlyDisadvantaged, Converter={StaticResource DateToBrushConverter}}"
+								Foreground="{Binding SeverlyDisadvantaged, Converter={StaticResource DateToBrushConverter}, ConverterParameter=Foreground}"
+								/>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+					<DataGridTemplateColumn.CellEditingTemplate>
+						<DataTemplate>
+							<DatePicker 
+								SelectedDate="{Binding SeverlyDisadvantaged}"
+								SelectedDateFormat="Short"/>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellEditingTemplate>
+				</DataGridTemplateColumn>
+				<!--<DataGridTextColumn Header="HHH" Binding="{Binding SeverlyDisadvantaged}" Width="*"/>-->
+				<DataGridTemplateColumn Header="Törlés" Width="50">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<Button Content ="Törlés" Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+        CommandParameter="{Binding}">
+							</Button>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+			</DataGrid.Columns>
+		</DataGrid>
+	</DockPanel>
+</Window>

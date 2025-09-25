@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DatumNyilvantarto.viewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,11 +16,11 @@ using System.Windows.Shapes;
 namespace DatumNyilvantarto
 {
     /// <summary>
-    /// Interaction logic for TanuloListaWindow.xaml
+    /// Interaction logic for StudentWindow.xaml
     /// </summary>
-    public partial class TanuloListaWindow : Window
+    public partial class StudentWindow : Window
     {
-        public TanuloListaWindow()
+        public StudentWindow()
         {
             InitializeComponent();
         }

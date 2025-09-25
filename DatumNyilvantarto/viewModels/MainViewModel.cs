@@ -19,18 +19,18 @@ namespace DatumNyilvantarto.viewModels
     public class MainViewModel
     {
         public ObservableCollection<SchoolClassViewModel> Classes { get; set; }
-        public ObservableCollection<Student> Students { get; set; }
+        public ObservableCollection<StudentViewModel> Students { get; set; }
 
         public UndoRedoManager UndoManager { get; } = new();
 
-        private SchoolClass? _selectedClass;
-        public SchoolClass? SelectedClass 
+        private SchoolClassViewModel? _selectedClass;
+        public SchoolClassViewModel? SelectedClass 
         {
             get => _selectedClass;
             set 
             {
                 _selectedClass = value;
-                LoadStudents();
+                //LoadStudents();
             }
         }
 
@@ -50,9 +50,11 @@ namespace DatumNyilvantarto.viewModels
         {
             if (obj is SchoolClassViewModel schoolClassVm)
             {
-                var window = new TanuloListaWindow
+                
+                var widowViewModel = new StudentWindowViewModel(schoolClassVm);
+                var window = new StudentWindow
                 {
-                    DataContext = schoolClassVm
+                    DataContext = widowViewModel
                 };
                 window.ShowDialog();
             }
@@ -61,32 +63,31 @@ namespace DatumNyilvantarto.viewModels
         public MainViewModel()
         {
             Classes = new ObservableCollection<SchoolClassViewModel>();
-            Students = new ObservableCollection<Student>();
+            Students = new ObservableCollection<StudentViewModel>();
 
             LoadClasses();
         }
 
-        private void LoadStudents()
-        {
-            Students.Clear();
-            if (SelectedClass != null)
-            {
-                var exePath = AppDomain.CurrentDomain.BaseDirectory;
-                var dbPath = Path.Combine(exePath, "schoolDb.db");
+        //private void LoadStudents()
+        //{
+        //    if (SelectedClass != null)
+        //    {
+        //        var exePath = AppDomain.CurrentDomain.BaseDirectory;
+        //        var dbPath = Path.Combine(exePath, "schoolDb.db");
 
-                var options = new DbContextOptionsBuilder<SchoolDbContext>()
-                    .UseSqlite($"Data Source={dbPath}")
-                    .Options;
+        //        var options = new DbContextOptionsBuilder<SchoolDbContext>()
+        //            .UseSqlite($"Data Source={dbPath}")
+        //            .Options;
 
-                using var db = new SchoolDbContext(options);
-                var studentList = db.Students.Where(t => t.ClassId == SelectedClass.Id).ToList();
-                foreach (var t in studentList)
-                {
-                    Students.Add(t);
-                }
-            }
+        //        using var db = new SchoolDbContext(options);
+        //        var studentList = db.Students.Where(t => t.ClassId == SelectedClass.Id).ToList();
+        //        foreach (var t in studentList)
+        //        {
+        //            Students.Add(t);
+        //        }
+        //    }
 
-        }
+        //}
 
         //private void DeleteStudent(object obj)
         //{
@@ -147,7 +148,6 @@ namespace DatumNyilvantarto.viewModels
 
             using var db = new SchoolDbContext(options);
             Classes.Clear();
-            var classes = db.SchoolClasses.Include(c => c.Students).ToList();
             
             var list = db.SchoolClasses.Include(s => s.Students).ToList();
             foreach (var schoolClass in list)
@@ -191,7 +191,7 @@ namespace DatumNyilvantarto.viewModels
 
                         using var db = new SchoolDbContext(options);
                         var entity = db.SchoolClasses.Find(schoolClassVm.Id);
-                        db.SchoolClasses.Remove(db.SchoolClasses.Find(schoolClassVm.Id));
+                        _ = db.SchoolClasses.Remove(db.SchoolClasses.Find(schoolClassVm.Id));
                         db.SaveChanges();
                         
                     }
@@ -275,10 +275,14 @@ namespace DatumNyilvantarto.viewModels
             EnsureDummyRow();
         }
 
-        private bool IsExpiringOrExpired(DateTime date)
+        private bool IsExpiringOrExpired(DateTime? date)
         {
-            DateTime today = DateTime.Today;
-            return date < today || (date - today).TotalDays <= 14;
+            DateTime? today = DateTime.Today;
+            if (date.HasValue)
+            {
+                return date.Value < today.Value || (date.Value - today.Value).TotalDays <= 14;
+            }
+            return false;
         }
 
     }
