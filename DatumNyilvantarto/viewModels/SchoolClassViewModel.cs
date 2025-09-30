@@ -16,6 +16,7 @@ namespace DatumNyilvantarto.viewModels
                 _grade = value;
                 OnPropertyChanged(nameof(Grade));
                 OnPropertyChanged(nameof(ClassName));
+                OnPropertyChanged(nameof(IsValid));
                 if (IsNew)
                 {
                     IsNew = false;
@@ -33,6 +34,7 @@ namespace DatumNyilvantarto.viewModels
                 _letter = value;
                 OnPropertyChanged(nameof(Letter));
                 OnPropertyChanged(nameof(ClassName));
+                OnPropertyChanged(nameof(IsValid));
                 if (IsNew)
                 {
                     IsNew = false;
@@ -49,6 +51,7 @@ namespace DatumNyilvantarto.viewModels
             set { 
                 _startingYear = value; 
                 OnPropertyChanged(nameof(StartingYear));
+                OnPropertyChanged(nameof(IsValid));
                 if (IsNew)
                 {
                     IsNew = false;
@@ -65,6 +68,7 @@ namespace DatumNyilvantarto.viewModels
             set { 
                 _headTeacher = value; 
                 OnPropertyChanged(nameof(HeadTeacher));
+                OnPropertyChanged(nameof(IsValid));
                 if (IsNew)
                 {
                     IsNew = false;
@@ -78,6 +82,16 @@ namespace DatumNyilvantarto.viewModels
         public string ClassName => $"{Grade}/{Letter}";
 
         public bool IsNew { get; set; }
+        public bool IsValid
+        {
+            get =>
+                int.IsPositive(Grade) &&
+                StartingYear > 0 &&
+                !string.IsNullOrWhiteSpace(HeadTeacher) &&
+                !string.IsNullOrWhiteSpace(Letter);
+            
+        }
+
 
         public ObservableCollection<StudentViewModel> Students { get; set; } = new();
 

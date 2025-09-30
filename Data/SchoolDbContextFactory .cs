@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Data
 {
-    internal class SchoolDbContextFactory : IDesignTimeDbContextFactory<SchoolDbContext>
+    public class SchoolDbContextFactory : IDesignTimeDbContextFactory<SchoolDbContext>
     {
         public SchoolDbContext CreateDbContext(string[] args)
         {
@@ -18,6 +18,7 @@ namespace Data
             var dbPath = Path.Combine(exePath, "schoolDb.db");
 
             optionsBuilder.UseSqlite($"Data Source={dbPath}");
+
 
             return new SchoolDbContext(optionsBuilder.Options);
         }

@@ -7,10 +7,10 @@
     public class SchoolClass
     {
         public int Id { get; set; }
-        public string Letter { get; set; }       // pl. "A", "B"
+        public string? Letter { get; set; }       // pl. "A", "B"
         public int Grade { get; set; }
         public int StartingYear { get; set; }     // osztály indulási éve
-        public string HeadTeacher { get; set; }
+        public string? HeadTeacher { get; set; }
 
         public ICollection<Student>? Students { get; set; }
     }

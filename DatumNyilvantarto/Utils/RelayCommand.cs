@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DatumNyilvantarto.viewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,7 +11,7 @@ namespace DatumNyilvantarto.Utils
     public class RelayCommand : ICommand
     {
         private readonly Action<object> _execute;
-        private readonly Predicate<object> _canExecute;
+        private readonly Predicate<object>? _canExecute;
 
 
         public RelayCommand(Action<object> execute, Predicate<object>? canExecute = null)
@@ -18,6 +19,7 @@ namespace DatumNyilvantarto.Utils
             _execute = execute;
             _canExecute = canExecute;
         }
+
         public event EventHandler? CanExecuteChanged;
 
         public bool CanExecute(object? parameter)

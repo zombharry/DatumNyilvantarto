@@ -44,13 +44,46 @@ namespace DatumNyilvantarto.viewModels
         public ICommand UndoCommand => new RelayCommand(_ => UndoManager.Undo());
         public ICommand RedoCommand => new RelayCommand(_ => UndoManager.Redo());
 
-        public ICommand OpenStudentsCommand => new RelayCommand(OpenStudents);
+        public ICommand OpenStudentsCommand => new RelayCommand(OpenStudents, CanOpenStudents);
+
+        private bool CanOpenStudents(object obj)
+        {
+            if (obj is SchoolClassViewModel schoolClassVm) {
+                return schoolClassVm?.IsValid == true;
+            }
+            return false;
+        }
 
         private void OpenStudents(object obj)
         {
             if (obj is SchoolClassViewModel schoolClassVm)
             {
+                if (schoolClassVm.Id == 0) { 
+
+                var exePath = AppDomain.CurrentDomain.BaseDirectory;
+                var dbPath = Path.Combine(exePath, "schoolDb.db");
+
+                var options = new DbContextOptionsBuilder<SchoolDbContext>()
+                    .UseSqlite($"Data Source={dbPath}")
+                    .Options;
+
+                using var db = new SchoolDbContext(options);
                 
+                if (schoolClassVm.Grade != 0
+                && schoolClassVm.StartingYear != 0
+                && schoolClassVm.HeadTeacher != string.Empty
+                && schoolClassVm.Letter != string.Empty) {
+                        var schoolClass = new SchoolClass{
+                            Letter = schoolClassVm.Letter,
+                            Grade = schoolClassVm.Grade,
+                            StartingYear = schoolClassVm.StartingYear,
+                            HeadTeacher = schoolClassVm.HeadTeacher,
+                        };
+                        db.SchoolClasses.Add(schoolClass);
+                        db.SaveChanges();
+                    }
+                }
+
                 var widowViewModel = new StudentWindowViewModel(schoolClassVm);
                 var window = new StudentWindow
                 {
@@ -68,74 +101,6 @@ namespace DatumNyilvantarto.viewModels
             LoadClasses();
         }
 
-        //private void LoadStudents()
-        //{
-        //    if (SelectedClass != null)
-        //    {
-        //        var exePath = AppDomain.CurrentDomain.BaseDirectory;
-        //        var dbPath = Path.Combine(exePath, "schoolDb.db");
-
-        //        var options = new DbContextOptionsBuilder<SchoolDbContext>()
-        //            .UseSqlite($"Data Source={dbPath}")
-        //            .Options;
-
-        //        using var db = new SchoolDbContext(options);
-        //        var studentList = db.Students.Where(t => t.ClassId == SelectedClass.Id).ToList();
-        //        foreach (var t in studentList)
-        //        {
-        //            Students.Add(t);
-        //        }
-        //    }
-
-        //}
-
-        //private void DeleteStudent(object obj)
-        //{
-        //    if (SelectedStudent != null)
-        //    {
-        //        var exePath = AppDomain.CurrentDomain.BaseDirectory;
-        //        var dbPath = Path.Combine(exePath, "schoolDb.db");
-
-        //        var options = new DbContextOptionsBuilder<SchoolDbContext>()
-        //            .UseSqlite($"Data Source={dbPath}")
-        //            .Options;
-
-        //        using var db = new SchoolDbContext(options);
-        //        db.Students.Remove(db.Students.Find(SelectedStudent.Id));
-        //        db.SaveChanges();
-        //        LoadStudents();
-        //    }
-        //}
-
-        //private void AddStudent(object obj)
-        //{
-        //    if (SelectedClass != null)
-        //    {
-        //        var exePath = AppDomain.CurrentDomain.BaseDirectory;
-        //        var dbPath = Path.Combine(exePath, "schoolDb.db");
-
-        //        var options = new DbContextOptionsBuilder<SchoolDbContext>()
-        //            .UseSqlite($"Data Source={dbPath}")
-        //            .Options;
-
-        //        using var db = new SchoolDbContext(options);
-
-        //        var tanulo = new Student
-        //        {
-        //            Name = "Placeholder",
-        //            CityOfBirth = "Placeholder",
-        //            DateOfBirth = DateTime.Now,
-        //            MotherName = "Placeholder",
-        //            ClassId = SelectedClass.Id,
-        //            ChildProtection = DateTime.Now.AddDays(10),
-        //            Disadvantaged = DateTime.Now.AddDays(20),
-        //            SeverlyDisadvantaged = DateTime.Now.AddDays(30)
-        //        };
-        //        db.Students.Add(tanulo);
-        //        db.SaveChanges();
-        //        LoadStudents();
-        //    }
-        //}
 
         private void LoadClasses()
         {
